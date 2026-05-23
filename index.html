@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настроение — Примерка и 3D Модели</title>
+    <style>
+        :root {
+            --bg-primary: #faf9f6;
+            --bg-secondary: #ffffff;
+            --bg-dark: #264653;
+            --accent: #2a9d8f;
+            --accent-light: #4ecdc4;
+            --accent-dark: #1d7a6e;
+            --highlight: #e76f51;
+            --text-primary: #264653;
+            --text-secondary: #5a7a7a;
+            --text-light: #faf9f6;
+            --border: #e0e6e6;
+            --shadow: rgba(38, 70, 83, 0.08);
+            --radius: 20px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(42,157,143,0.3); }
+            50%      { transform: scale(1.08); box-shadow: 0 6px 30px rgba(42,157,143,0.5); }
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(250, 249, 246, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.6rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.15rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logo-img {
+            width: 160px;
+            height: auto;
+            filter: drop-shadow(0 3px 8px rgba(38,70,83,0.2));
+            transition: var(--transition);
+        }
+        .logo-img:hover { transform: scale(1.06); }
+        .logo-text {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            letter-spacing: 0.1em;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-top: -2px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2.5px;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+        .nav-links a:hover { color: var(--accent-dark); }
+        .nav-links a:hover::after { width: 100%; }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .mobile-menu-btn span {
+            display: block;
+            width: 26px;
+            height: 2.5px;
+            background: var(--text-primary);
+            margin: 5.5px 0;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10rem 2rem 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            top: -15%;
+            right: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--accent-light) 0%, transparent 65%);
+            opacity: 0.25;
+            border-radius: 50%;
+            animation: fadeInUp 1s ease;
+            pointer-events: none;
+        }
+        .hero-content {
+            max-width: 850px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            animation: fadeInUp 1s ease;
+        }
+        .hero h1 span {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+        .hero h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--accent-light), var(--highlight));
+            opacity: 0.3;
+            border-radius: 4px;
+            z-index: -1;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+        .btn {
+            padding: 1.1rem 2.8rem;
+            border-radius: 50px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 2.5px solid transparent;
+            position: relative;
+            overflow: hidden;
+            background: none;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            box-shadow: 0 6px 25px rgba(42, 157, 143, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(42, 157, 143, 0.45);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-dark);
+            border-color: var(--accent);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            transform: translateY(-3px);
+            border-color: transparent;
+        }
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 4rem;
+            font-size: 1.15rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+            border-radius: 4px 4px 0 0;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px var(--shadow);
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            box-shadow: 0 8px 20px rgba(42,157,143,0.2);
+        }
+        .feature-card h3 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .fitting-trigger {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        .fitting-interface {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+        }
+        .fitting-interface.active {
+            display: block;
+        }
+        .upload-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .upload-box {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-box:hover {
+            border-color: var(--accent);
+            background: rgba(42, 157, 143, 0.04);
+            transform: scale(1.02);
+        }
+        .upload-box input[type="file"] {
+            display: none;
+        }
+        .upload-preview {
+            width: 100%;
+            text-align: center;
+        }
+        .upload-preview img {
+            max-width: 100%;
+            max-height: 160px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        .fitting-actions {
+            display: none;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.4s ease;
+        }
+        .fitting-actions.active {
+            display: flex;
+        }
+        .preview-thumbs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+        .preview-thumbs img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+        .preview-thumbs .more-badge {
+            width: 56px;
+            height: 56px;
+            background: var(--accent);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .dark-section {
+            background: var(--bg-dark);
+            max-width: 100%;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .dark-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.08;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .dark-section .section-title,
+        .dark-section .section-subtitle {
+            color: var(--text-light);
+            position: relative;
+            z-index: 1;
+        }
+        .dark-section .section-subtitle { opacity: 0.85; }
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .step {
+            flex: 1;
+            min-width: 260px;
+            max-width: 320px;
+            text-align: center;
+            color: var(--text-light);
+        }
+        .step-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 0 auto 1.5rem;
+            color: white;
+            box-shadow: 0 8px 25px rgba(42,157,143,0.3);
+        }
+        .step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .step p {
+            opacity: 0.85;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        .chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 999;
+        }
+        .chat-button {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border: none;
+            color: white;
+            font-size: 1.6rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 3s ease-in-out infinite;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(42,157,143,0.35);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 1001;
+        }
+        .chat-button:hover { transform: scale(1.12); }
+        .chat-button:active { transform: scale(0.95); }
+        .chat-window {
+            position: absolute;
+            bottom: 85px;
+            right: 0;
+            width: 380px;
+            max-height: 550px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.18);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            z-index: 1000;
+        }
+        .chat-window.active {
+            display: flex;
+            animation: fadeInUp 0.35s ease;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+            line-height: 1;
+        }
+        .chat-close:hover { opacity: 1; }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 380px;
+        }
+        .message {
+            max-width: 88%;
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            font-size: 0.92rem;
+            line-height: 1.55;
+            animation: fadeInUp 0.3s ease;
+        }
+        .message-bot {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message-user {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+        }
+        .chat-option {
+            background: transparent;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 0.5rem 1.1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .chat-option:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .chat-input-area {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.6rem;
+            background: var(--bg-primary);
+        }
+        .chat-input {
+            flex: 1;
+            border: 1.5px solid var(--border);
+            border-radius: 24px;
+            padding: 0.85rem 1.25rem;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--bg-secondary);
+        }
+        .chat-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.1);
+        }
+        .chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .chat-send:hover {
+            background: var(--accent-dark);
+            transform: scale(1.1);
+        }
+        footer {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: 3.5rem 2rem;
+            position: relative;
+        }
+        footer p { font-size: 0.9rem; opacity: 0.9; }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(38, 70, 83, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeInUp 0.35s ease;
+        }
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            max-width: 540px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.4s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .modal-close:hover {
+            color: var(--highlight);
+            background: rgba(231, 111, 81, 0.1);
+        }
+        .modal h3 {
+            margin-bottom: 1.75rem;
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .form-group .label-comment {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--highlight);
+            font-weight: 500;
+            font-style: italic;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(42, 157, 143, 0.12);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 90px;
+                right: -100%;
+                width: 75%;
+                height: calc(100vh - 90px);
+                background: var(--bg-secondary);
+                flex-direction: column;
+                padding: 2.5rem;
+                transition: right 0.35s ease;
+                box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+                gap: 1.8rem;
+                border-radius: 24px 0 0 24px;
+            }
+            .nav-links.active { right: 0; }
+            .mobile-menu-btn { display: block; }
+            .hero {
+                padding: 9rem 1.5rem 4rem;
+                min-height: auto;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem 2rem;
+            }
+            section { padding: 4rem 1.5rem; }
+            .upload-area { grid-template-columns: 1fr; }
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            .chat-widget {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            .chat-window {
+                width: calc(100vw - 2rem);
+                right: -0.5rem;
+                max-height: 70vh;
+                border-radius: 18px;
+            }
+            .features-grid { grid-template-columns: 1fr; }
+            .logo-img { width: 130px; }
+            .form-row { grid-template-columns: 1fr; }
+            .fitting-actions { flex-direction: column; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        .toast-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(38, 70, 83, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 1rem;
+        }
+        .toast-overlay.active {
+            display: flex;
+            animation: fadeInUp 0.35s ease;
+        }
+        .toast-box {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.4s ease;
+        }
+        .toast-box p {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            margin-bottom: 1.75rem;
+            line-height: 1.6;
+        }
+        .toast-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(38, 70, 83, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 1rem;
+            touch-action: manipulation;
+        }
+        .toast-overlay.active {
+            display: flex;
+            animation: fadeInUp 0.35s ease;
+        }
+        .toast-box {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.4s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .toast-box p {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            margin-bottom: 1.75rem;
+            line-height: 1.6;
+        }
+        .toast-box .btn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* AI Processing Overlay */
+        .ai-processing-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(38, 70, 83, 0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 4000;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            flex-direction: column;
+            padding: 2rem;
+        }
+        .ai-processing-overlay.active {
+            display: flex;
+            animation: fadeInUp 0.4s ease;
+        }
+        .ai-scanner {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin-bottom: 2.5rem;
+        }
+        .ai-scanner-ring {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: 3px solid rgba(42, 157, 143, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-light);
+            animation: spin 1.2s linear infinite;
+        }
+        .ai-scanner-ring:nth-child(2) {
+            width: 80%; height: 80%;
+            top: 10%; left: 10%;
+            animation-direction: reverse;
+            animation-duration: 0.9s;
+            border-top-color: var(--highlight);
+        }
+        .ai-scanner-ring:nth-child(3) {
+            width: 60%; height: 60%;
+            top: 20%; left: 20%;
+            animation-duration: 0.6s;
+            border-top-color: #fff;
+        }
+        .ai-scanner-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            filter: drop-shadow(0 0 20px rgba(42,157,143,0.6));
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .ai-progress-container {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1.5rem;
+        }
+        .ai-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .ai-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-light), var(--accent));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 15px rgba(42,157,143,0.5);
+        }
+        .ai-status {
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 0.75rem;
+            min-height: 1.6em;
+        }
+        .ai-percent {
+            color: var(--accent-light);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .ai-steps {
+            display: flex;
+            gap: 1rem;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+        .ai-step {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.3s;
+        }
+        .ai-step.active {
+            color: var(--accent-light);
+        }
+        .ai-step-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .ai-step.active .ai-step-dot {
+            opacity: 1;
+            box-shadow: 0 0 8px currentColor;
+        }
+        /* Result stub modal */
+        .result-stub-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(38, 70, 83, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 4100;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 1rem;
+        }
+        .result-stub-overlay.active {
+            display: flex;
+            animation: fadeInUp 0.35s ease;
+        }
+        .result-stub-box {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.4s ease;
+        }
+        .result-stub-box .stub-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .result-stub-box h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        .result-stub-box p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.75rem;
+        }
+    </style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>    <!-- HEADER -->
+    <header>
+        <nav>
+            <div class="logo-container" id="logoBtn">
+                <img class="logo-img" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjx0ZXh0IHg9IjEwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzI2NDY1MyI+SFNUPC90ZXh0Pjwvc3ZnPg==" alt="HST">
+                <span class="logo-text">настроение сейчас такое</span>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a onclick="scrollToSection('hero')">Главная</a></li>
+                <li><a onclick="scrollToSection('fitting')">Примерка</a></li>
+                <li><a onclick="scrollToSection('models')">3D Модели</a></li>
+                <li><a onclick="scrollToSection('support')">Поддержка</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>Примерь перед покупкой.<br>Создай для <span>печати.</span></h1>
+            <p>Загружай товары с Ozon, Wildberries и других площадок — смотри, как они сидят на тебе. Заказывай 3D-модели для печати на принтере.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="scrollToSection('fitting')">
+                    <span>👕</span> Примерка и Визуалка
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('modelModal')">
+                    <span>🖨️</span> Заказ 3D модели
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <h2 class="section-title animate-on-scroll">Примерка с маркетплейсов</h2>
+        <p class="section-subtitle animate-on-scroll">Увидь реальную посадку и размер до покупки</p>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">📸</div>
+                <h3>Загрузи свое фото</h3>
+                <p>Сделай снимок в облегающей одежде или белье. Нейросеть построит твою 3D-фигуру для точной примерки.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🛍️</div>
+                <h3>Добавь товар</h3>
+                <p>Вставь ссылку с Ozon, Wildberries, Яндекс.Маркет или загрузи фото товара вручную.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">✨</div>
+                <h3>Смотри результат</h3>
+                <p>Увидь, как вещь сидит на тебе, сравни размеры и посадку перед покупкой.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FITTING INTERFACE -->
+    <section id="fitting">
+        <h2 class="section-title animate-on-scroll">Попробуй примерку</h2>
+        <p class="section-subtitle animate-on-scroll">Загрузи фото и вещи для примерки</p>
+        <div class="fitting-trigger">
+            <button class="btn btn-primary" id="fittingToggleBtn" onclick="toggleFitting()">
+                <span>👕</span> Начать примерку
+            </button>
+        </div>
+        <div class="fitting-interface" id="fittingInterface">
+            <div class="upload-area">
+                <div class="upload-box" id="photoUploadBox" onclick="document.getElementById('photoInput').click()">
+                    <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                    <div class="upload-icon">📸</div>
+                    <h3>Твое фото</h3>
+                    <p>Нажми или перетащи сюда</p>
+                    <div class="upload-preview" id="photoPreview"></div>
+                </div>
+                <div class="upload-box" id="clothesUploadBox" onclick="document.getElementById('clothesInput').click()">
+                    <input type="file" id="clothesInput" accept="image/*" multiple onchange="handleClothesUpload(event)">
+                    <div class="upload-icon">👕</div>
+                    <h3>Вещи для примерки</h3>
+                    <p>Нажми или перетащи сюда</p>
+                    <div class="upload-preview" id="clothesPreview"></div>
+                    <div class="preview-thumbs" id="clothesThumbs"></div>
+                </div>
+            </div>
+            <div class="fitting-actions" id="fittingActions">
+                <button class="btn btn-primary" onclick="tryAllClothes()">
+                    <span>✨</span> Померить все вещи
+                </button>
+                <button class="btn btn-secondary" onclick="tryFirstCloth()">
+                    <span>👕</span> Померить первую вещь
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D MODELS -->
+    <section class="dark-section" id="models">
+        <h2 class="section-title animate-on-scroll">3D Модели для печати</h2>
+        <p class="section-subtitle animate-on-scroll">Закажи уникальную модель для 3D-принтера</p>
+        <div class="steps">
+            <div class="step animate-on-scroll">
+                <div class="step-number">1</div>
+                <h3>Опиши идею</h3>
+                <p>Расскажи, что хочешь напечатать: фигурку, аксессуар, деталь или прототип.</p>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">2</div>
+                <h3>Мы моделируем</h3>
+                <p>Наши дизайнеры создадут 3D-модель по твоему описанию и референсам.</p>
+            </div>
+            <div class="step animate-on-scroll">
+                <div class="step-number">3</div>
+                <h3>Получи файл</h3>
+                <p>Скачай готовую модель в формате STL или OBJ для печати на любом 3D-принтере.</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 3rem;">
+            <button class="btn btn-primary" onclick="openModal('modelModal')">
+                <span>🖨️</span> Заказать 3D модель
+            </button>
+        </div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section id="support">
+        <h2 class="section-title animate-on-scroll">Поддержка</h2>
+        <p class="section-subtitle animate-on-scroll">Остались вопросы? Мы на связи!</p>
+        <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Напиши нам в чат или оставь заявку — мы поможем с примеркой, 3D-моделями и любым вопросом.</p>
+            <button class="btn btn-primary" onclick="openChat()">
+                <span>💬</span> Открыть чат
+            </button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Настроение — Примерка и 3D Модели. Все права защищены.</p>
+    </footer>
+
+    <!-- CHAT WIDGET -->
+    <div class="chat-widget">
+        <button class="chat-button" id="chatToggle" onclick="toggleChat()">💬</button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>Поддержка Настроения</span>
+                <button class="chat-close" onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message message-bot">
+                    Привет! Я помогу с примеркой и 3D-моделями. Что интересует?
+                    <div class="chat-options">
+                        <button class="chat-option" onclick="handleChatOption('fitting')">Примерка</button>
+                        <button class="chat-option" onclick="handleChatOption('3d')">3D модель</button>
+                        <button class="chat-option" onclick="handleChatOption('price')">Цены</button>
+                        <button class="chat-option" onclick="handleChatOption('contacts')">Контакты</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Напиши сообщение..." onkeypress="handleChatKeypress(event)">
+                <button class="chat-send" onclick="sendChatMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal-overlay" id="modelModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modelModal')">×</button>
+            <h3>Заказать 3D модель</h3>
+            <form action="https://formspree.io/f/xojbelay" method="POST">
+  <label>
+    Ваше имя:
+    <input type="text" name="name" required>
+  </label>
+  <br><br>
+  
+  <label>
+    Email для связи:
+    <input type="email" name="email" required>
+  </label>
+  <br><br>
+  
+  <label>
+    Описание заказа (3D модель):
+    <textarea name="message" rows="5" required></textarea>
+  </label>
+  <br><br>
+  
+  <button type="submit">Отправить заявку</button>
+</form>
+        </div>
+    </div>    <script>
+        // Принудительно сбрасываем кеш при каждой загрузке
+        (function() {
+            if (!window.location.search.includes('nocache')) {
+                window.location.replace(window.location.href + (window.location.search ? '&' : '?') + 'nocache=' + Date.now());
+            }
+        })();
+
+        // Navigation
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('navLinks').classList.remove('active');
+            }
+        }
+
+        // Mobile menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Logo click
+        document.getElementById('logoBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Header hide/show on scroll
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const header = document.querySelector('header');
+            
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            lastScroll = currentScroll;
+        });
+
+        // Fitting interface
+        let photoFile = null;
+        let clothesFiles = [];
+
+        function toggleFitting() {
+            const interface = document.getElementById('fittingInterface');
+            const btn = document.getElementById('fittingToggleBtn');
+            
+            if (interface.classList.contains('active')) {
+                interface.classList.remove('active');
+                btn.innerHTML = '<span>👕</span> Начать примерку';
+            } else {
+                interface.classList.add('active');
+                btn.innerHTML = '<span>✕</span> Скрыть примерку';
+            }
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                photoFile = file;
+                const preview = document.getElementById('photoPreview');
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" alt="Your photo">';
+                    checkFittingReady();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleClothesUpload(event) {
+            const files = Array.from(event.target.files);
+            if (files.length > 0) {
+                clothesFiles = files;
+                const thumbs = document.getElementById('clothesThumbs');
+                thumbs.innerHTML = '';
+                
+                files.slice(0, 4).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Cloth ' + (index + 1);
+                        thumbs.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+                
+                if (files.length > 4) {
+                    const badge = document.createElement('div');
+                    badge.className = 'more-badge';
+                    badge.textContent = '+' + (files.length - 4);
+                    thumbs.appendChild(badge);
+                }
+                
+                checkFittingReady();
+            }
+        }
+
+        function checkFittingReady() {
+            const actions = document.getElementById('fittingActions');
+            if (photoFile && clothesFiles.length > 0) {
+                actions.classList.add('active');
+            } else {
+                actions.classList.remove('active');
+            }
+        }
+
+        function tryAllClothes() {
+            if (clothesFiles.length === 0) {
+                showToast('Сначала загрузи вещи для примерки!');
+                return;
+            }
+            startProcessing('all');
+        }
+
+        function tryFirstCloth() {
+            if (clothesFiles.length === 0) {
+                showToast('Сначала загрузи вещи для примерки!');
+                return;
+            }
+            startProcessing('first');
+        }
+
+        // Toast notification functions
+        function showToast(message) {
+            const overlay = document.getElementById('toastOverlay');
+            const msgEl = document.getElementById('toastMessage');
+            msgEl.textContent = message;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideToast() {
+            const overlay = document.getElementById('toastOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // AI Processing
+        function startProcessing(mode) {
+            const overlay = document.getElementById('aiProcessingOverlay');
+            const percentEl = document.getElementById('aiPercent');
+            const fillEl = document.getElementById('aiProgressFill');
+            const statusEl = document.getElementById('aiStatus');
+            const steps = [
+                document.getElementById('step1'),
+                document.getElementById('step2'),
+                document.getElementById('step3')
+            ];
+
+            const messages = [
+                'Анализируем фигуру...',
+                'Подгоняем размеры...',
+                'Накладываем текстуры...',
+                'Сглаживаем швы...',
+                'Финальный рендеринг...'
+            ];
+
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            let progress = 0;
+            let messageIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 12 + 3;
+                if (progress > 100) progress = 100;
+
+                percentEl.textContent = Math.floor(progress) + '%';
+                fillEl.style.width = progress + '%';
+
+                if (progress > 15 && progress < 40) {
+                    steps[0].classList.add('active');
+                    statusEl.textContent = messages[0];
+                } else if (progress >= 40 && progress < 70) {
+                    steps[1].classList.add('active');
+                    statusEl.textContent = messages[1 + Math.floor(Math.random() * 2)];
+                } else if (progress >= 70) {
+                    steps[2].classList.add('active');
+                    statusEl.textContent = messages[3 + Math.floor(Math.random() * 2)];
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                        showResultStub(mode);
+                    }, 600);
+                }
+            }, 250);
+        }
+
+        function showResultStub(mode) {
+            const overlay = document.getElementById('resultStubOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeResultStub() {
+            const overlay = document.getElementById('resultStubOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            // Reset processing UI for next time
+            document.getElementById('aiPercent').textContent = '0%';
+            document.getElementById('aiProgressFill').style.width = '0%';
+            document.getElementById('aiStatus').textContent = 'Анализируем фигуру...';
+            document.querySelectorAll('.ai-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+        }
+
+        // Chat
+        let chatOpen = false;
+
+        function toggleChat() {
+            const window = document.getElementById('chatWindow');
+            chatOpen = !chatOpen;
+            
+            if (chatOpen) {
+                window.classList.add('active');
+            } else {
+                window.classList.remove('active');
+            }
+        }
+
+        function openChat() {
+            chatOpen = true;
+            document.getElementById('chatWindow').classList.add('active');
+        }
+
+        function handleChatOption(option) {
+            const messages = document.getElementById('chatMessages');
+            
+            let response = '';
+            switch(option) {
+                case 'fitting':
+                    response = 'Примерка работает так: загрузи свое фото и фото вещи — AI покажет, как она сидит на тебе. Стоимость: 50₽ за примерку.';
+                    break;
+                case '3d':
+                    response = '3D-модели создаем по твоему описанию. Стоимость от 500₽. Срок: 1-3 дня. Форматы: STL, OBJ, FBX.';
+                    break;
+                case 'price':
+                    response = 'Цены: Примерка — 50₽/вещь, 3D-модель — от 500₽, Подписка Pro — 299₽/мес (безлимит).';
+                    break;
+                case 'contacts':
+                    response = 'Связаться: VK vk.com/id686533076 или email trapeznikovnikita94@gmail.com';
+                    break;
+            }
+            
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message message-user';
+            userMsg.textContent = option === 'fitting' ? 'Примерка' : option === '3d' ? '3D модель' : option === 'price' ? 'Цены' : 'Контакты';
+            messages.appendChild(userMsg);
+            
+            const botMsg = document.createElement('div');
+            botMsg.className = 'message message-bot';
+            botMsg.textContent = response;
+            messages.appendChild(botMsg);
+            
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const messages = document.getElementById('chatMessages');
+            
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message message-user';
+            userMsg.textContent = text;
+            messages.appendChild(userMsg);
+            
+            let response = 'Спасибо за сообщение! Мы скоро ответим. Для быстрого ответа выбери вариант ниже или напиши нам напрямую: VK vk.com/id686533076 или email trapeznikovnikita94@gmail.com';
+            
+            if (text.toLowerCase().includes('примерк') || text.toLowerCase().includes('одежд')) {
+                response = 'Примерка: загрузи фото и вещь — AI покажет результат. Стоимость 50₽/вещь.';
+            } else if (text.toLowerCase().includes('3д') || text.toLowerCase().includes('3d') || text.toLowerCase().includes('модел')) {
+                response = '3D-модели: от 500₽, форматы STL/OBJ, срок 1-3 дня.';
+            } else if (text.toLowerCase().includes('цен') || text.toLowerCase().includes('стоим')) {
+                response = 'Цены: Примерка 50₽, 3D-модель от 500₽, Pro-подписка 299₽/мес.';
+            } else if (text.toLowerCase().includes('контакт') || text.toLowerCase().includes('связ')) {
+                response = 'Контакты: VK vk.com/id686533076, Email trapeznikovnikita94@gmail.com';
+            }
+            
+            const botMsg = document.createElement('div');
+            botMsg.className = 'message message-bot';
+            botMsg.textContent = response;
+            messages.appendChild(botMsg);
+            
+            messages.scrollTop = messages.scrollHeight;
+            input.value = '';
+        }
+
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        // Modals
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Form submission
+        function submitModelOrder(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const name = form.querySelector('input[placeholder="Иван"]').value;
+            const surname = form.querySelector('input[placeholder="Иванов"]').value;
+            const contact = form.querySelector('input[placeholder="ivan@email.com или @ivan"]').value;
+            const desc = form.querySelector('textarea').value;
+            
+            const subject = 'Заявка на 3D модель от ' + name + ' ' + surname;
+            const body = 'Имя: ' + name + ' ' + surname + '\n' +
+                'Контакт: ' + contact + '\n' +
+                'Описание: ' + desc + '\n' +
+                'Время: ' + new Date().toLocaleString('ru-RU');
+            
+            window.location.href = 'mailto:trapeznikovnikita94@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            
+            alert('✅ Открылось окно отправки email. Проверь почтовый клиент!');
+            closeModal('modelModal');
+            form.reset();
+        }
+
+        // Drag and drop for upload boxes
+        document.querySelectorAll('.upload-box').forEach(box => {
+            box.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--accent)';
+                this.style.background = 'rgba(42, 157, 143, 0.08)';
+            });
+            
+            box.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--border)';
+                this.style.background = 'var(--bg-secondary)';
+            });
+            
+            box.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--border)';
+                this.style.background = 'var(--bg-secondary)';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const input = this.querySelector('input[type="file"]');
+                    const event = new Event('change', { bubbles: true });
+                    Object.defineProperty(event, 'target', { value: { files: files }, enumerable: true });
+                    input.dispatchEvent(event);
+                }
+            });
+        });
+    </script>
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast-overlay" id="toastOverlay" onclick="if(event.target===this)hideToast()">
+        <div class="toast-box">
+            <p id="toastMessage"></p>
+            <button class="btn btn-primary" onclick="hideToast()" style="min-width:120px; justify-content:center;">OK</button>
+        </div>
+    </div>
+    <!-- AI Processing Overlay -->
+    <div class="ai-processing-overlay" id="aiProcessingOverlay">
+        <div class="ai-scanner">
+            <div class="ai-scanner-ring"></div>
+            <div class="ai-scanner-ring"></div>
+            <div class="ai-scanner-ring"></div>
+            <div class="ai-scanner-icon">✨</div>
+        </div>
+        <div class="ai-percent" id="aiPercent">0%</div>
+        <div class="ai-progress-container">
+            <div class="ai-progress-bar">
+                <div class="ai-progress-fill" id="aiProgressFill"></div>
+            </div>
+        </div>
+        <div class="ai-status" id="aiStatus">Анализируем фигуру...</div>
+        <div class="ai-steps">
+            <div class="ai-step active" id="step1">
+                <div class="ai-step-dot"></div>
+                <span>Сканирование</span>
+            </div>
+            <div class="ai-step" id="step2">
+                <div class="ai-step-dot"></div>
+                <span>Обработка</span>
+            </div>
+            <div class="ai-step" id="step3">
+                <div class="ai-step-dot"></div>
+                <span>Рендеринг</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Stub Modal -->
+    <div class="result-stub-overlay" id="resultStubOverlay" onclick="if(event.target===this)closeResultStub()">
+        <div class="result-stub-box">
+            <span class="stub-icon">🎉</span>
+            <h3>Почти готово!</h3>
+            <p>Результат AI-примерки появится здесь после подключения нейросети.<br><br>Сейчас это демо-версия интерфейса. В продакшене здесь будет реальное фото с примерённой одеждой.</p>
+            <button class="btn btn-primary" onclick="closeResultStub()" style="min-width:140px; justify-content:center;">
+                <span>👍</span> Понятно
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>
